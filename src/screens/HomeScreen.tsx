@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  ToastAndroid,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -23,6 +24,7 @@ import HeaderBar from '../components/HeaderBar';
 import CustomIcon from '../components/CustomIcon';
 import CoffeeCard from '../components/CoffeeCard';
 
+// Getting Categories form data
 const getCategoriesFormData = (data: any) => {
   let temp: any = {};
 
@@ -39,6 +41,7 @@ const getCategoriesFormData = (data: any) => {
   return categories;
 };
 
+// Getting coffee list
 const getCoffeeList = (category: string, data: any) => {
   if (category == 'All') {
     return data;
@@ -49,6 +52,7 @@ const getCoffeeList = (category: string, data: any) => {
 };
 
 const HomeScreen = ({navigation}: any) => {
+  // Getting coffee list and bean list from store.ts
   const CoffeeList = useStore((state: any) => state.CoffeeList);
   const BeanList = useStore((state: any) => state.BeanList);
 
@@ -94,6 +98,41 @@ const HomeScreen = ({navigation}: any) => {
     setCategoryIndex({index: 0, category: categories[0]});
     setSortedCoffee([...CoffeeList]);
     setSearchText('');
+  };
+
+  // add to chart function calling
+  const addToCart = useStore((state: any) => state.addToCart);
+
+  // calculate cart price function calling
+  const calculateCartPrice = useStore((state: any) => state.calculateCartPrice);
+
+  // Coffee and Bean add to cart function calling from directly from home screen
+  const CoffeeCardAddToCart = ({
+    id,
+    index,
+    name,
+    roasted,
+    imagelink_square,
+    special_ingredient,
+    type,
+    prices,
+  }: any) => {
+    addToCart({
+      id,
+      index,
+      name,
+      roasted,
+      imagelink_square,
+      special_ingredient,
+      type,
+      prices,
+    });
+    calculateCartPrice();
+    ToastAndroid.showWithGravity(
+      `${name} is added to Cart`,
+      ToastAndroid.SHORT,
+      ToastAndroid.CENTER,
+    );
   };
 
   return (
@@ -154,7 +193,7 @@ const HomeScreen = ({navigation}: any) => {
           )}
         </View>
 
-        {/* Categories Scroller */}
+        {/* Categories Scroll */}
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -194,7 +233,7 @@ const HomeScreen = ({navigation}: any) => {
           ))}
         </ScrollView>
 
-        {/* Coffee Faltlist */}
+        {/* Coffee FlatList */}
         <FlatList
           ref={ListRef}
           horizontal
@@ -229,7 +268,7 @@ const HomeScreen = ({navigation}: any) => {
                   special_ingredient={item.special_ingredient}
                   average_rating={item.average_rating}
                   price={item.prices[2]}
-                  buttonPressHandler={() => {}}
+                  buttonPressHandler={CoffeeCardAddToCart}
                 />
               </TouchableOpacity>
             );
@@ -238,7 +277,7 @@ const HomeScreen = ({navigation}: any) => {
 
         <Text style={styles.CoffeeBeansTitle}>Coffee Beans</Text>
 
-        {/* Bean Flatlist */}
+        {/* Bean FlatList */}
         <FlatList
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -268,7 +307,7 @@ const HomeScreen = ({navigation}: any) => {
                   special_ingredient={item.special_ingredient}
                   average_rating={item.average_rating}
                   price={item.prices[2]}
-                  buttonPressHandler={() => {}}
+                  buttonPressHandler={CoffeeCardAddToCart}
                 />
               </TouchableOpacity>
             );
@@ -279,6 +318,7 @@ const HomeScreen = ({navigation}: any) => {
   );
 };
 
+// Styling
 const styles = StyleSheet.create({
   ScreenContainer: {
     flex: 1,
