@@ -1,14 +1,27 @@
 import React, {useState} from 'react';
-import {ScrollView, StatusBar, StyleSheet, Text, View} from 'react-native';
+import {
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {useStore} from '../store/store';
 import {useBottomTabBarHeight} from '@react-navigation/bottom-tabs';
-import {COLORS, SPACING} from '../theme/theme';
+import {
+  BORDERRADIUS,
+  COLORS,
+  FONTFAMILY,
+  FONTSIZE,
+  SPACING,
+} from '../theme/theme';
 import HeaderBar from '../components/HeaderBar';
 import EmptyListAnimation from '../components/EmptyListAnimation';
 import PopUpAnimation from '../components/PopUpAnimation';
 import OrderHistoryCard from '../components/OrderHistoryCard';
 
-const OrderHistory = () => {
+const OrderHistory = ({navigation}: any) => {
   // getting order history list from store.ts
   const OrderHistoryList = useStore((state: any) => state.OrderHistoryList);
 
@@ -18,7 +31,25 @@ const OrderHistory = () => {
   // lottie state variable
   const [showAnimation, setShowAnimation] = useState(false);
 
-  console.log('Order History =', OrderHistoryList.length);
+  // Navigation handler function
+  const navigationHandler = ({index, id, type}: any) => {
+    navigation.push('Details', {
+      index,
+      id,
+      type,
+    });
+  };
+
+  // button press handler function
+  const buttonPressHandler = () => {
+    // set show animation to true
+    setShowAnimation(true);
+
+    // set timeout for 2 seconds
+    setTimeout(() => {
+      setShowAnimation(false);
+    }, 2000);
+  };
 
   return (
     <View style={styles.ScreenContainer}>
@@ -50,14 +81,25 @@ const OrderHistory = () => {
                   <OrderHistoryCard
                     key={index.toString()}
                     OrderDate={data.OrderDate}
-                    CartItems={data.CartItems}
+                    CartList={data.CartList}
                     CartListPrice={data.CartListPrice}
-                    navigationHandler={() => {}}
+                    navigationHandler={navigationHandler}
                   />
                 ))}
               </View>
             )}
           </View>
+          {OrderHistoryList.length > 0 ? (
+            <TouchableOpacity
+              style={styles.DownloadButton}
+              onPress={() => {
+                buttonPressHandler();
+              }}>
+              <Text style={styles.DownloadButtonText}>Download</Text>
+            </TouchableOpacity>
+          ) : (
+            <></>
+          )}
         </View>
       </ScrollView>
     </View>
@@ -91,6 +133,21 @@ const styles = StyleSheet.create({
   ListItemContainer: {
     paddingHorizontal: SPACING.space_20,
     gap: SPACING.space_30,
+  },
+
+  DownloadButton: {
+    margin: SPACING.space_20,
+    backgroundColor: COLORS.primaryOrangeHex,
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: SPACING.space_32 * 2,
+    borderRadius: BORDERRADIUS.radius_25,
+  },
+
+  DownloadButtonText: {
+    fontFamily: FONTFAMILY.poppins_semibold,
+    fontSize: FONTSIZE.size_18,
+    color: COLORS.primaryWhiteHex,
   },
 });
 
