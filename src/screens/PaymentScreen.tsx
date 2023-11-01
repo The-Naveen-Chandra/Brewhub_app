@@ -20,6 +20,7 @@ import PaymentFooter from '../components/PaymentFooter';
 import LinearGradient from 'react-native-linear-gradient';
 import CustomIcon from '../components/CustomIcon';
 import {useStore} from '../store/store';
+import PopUpAnimation from '../components/PopUpAnimation';
 
 const PaymentList = [
   {
@@ -47,6 +48,7 @@ const PaymentList = [
 const PaymentScreen = ({navigation, route}: any) => {
   // setting payment mode
   const [paymentMode, setPaymentMode] = useState('Credit Card');
+
   // lottie state variable
   const [showAnimation, setShowAnimation] = useState(false);
 
@@ -79,7 +81,14 @@ const PaymentScreen = ({navigation, route}: any) => {
       <StatusBar backgroundColor={COLORS.primaryBlackHex} />
 
       {/* Conditionally rendering lottie animation */}
-      {showAnimation ? <></> : <></>}
+      {showAnimation ? (
+        <PopUpAnimation
+          style={styles.LottieAnimation}
+          source={require('../lottie/successful.json')}
+        />
+      ) : (
+        <></>
+      )}
 
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -190,6 +199,11 @@ const styles = StyleSheet.create({
   ScreenContainer: {
     flex: 1,
     backgroundColor: COLORS.primaryBlackHex,
+  },
+
+  // Lottie Animation Styles
+  LottieAnimation: {
+    flex: 1,
   },
 
   ScrollViewFlex: {
