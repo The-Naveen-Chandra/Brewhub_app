@@ -40,7 +40,7 @@ const CartScreen = ({navigation, route}: any) => {
 
   // button Handler function
   const buttonHandler = () => {
-    navigation.push('Payment');
+    navigation.push('Payment', {amount: CartPrice});
   };
 
   // increment Quantity function
